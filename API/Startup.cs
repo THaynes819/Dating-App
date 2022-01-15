@@ -25,7 +25,7 @@ namespace API
                                     {
                                         builder.AllowAnyHeader()
                                         .AllowAnyMethod()
-                                        .WithOrigins("http://localhost:4200");
+                                        .WithOrigins("https://localhost:4200");
                                     });
             });
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
