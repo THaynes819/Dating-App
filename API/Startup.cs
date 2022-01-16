@@ -5,20 +5,27 @@ namespace API
 {
     public class Startup
     {        
-        // Add services to the container.
-        public Startup()
+        private readonly IConfiguration _config;
+        //WebApplicationBuilder builder;
+        string myAngularPolicy = "myAngularPolicy";
+        public Startup(IConfiguration config)
         {
-            var myAngularPolicy = "myAngularPolicy";
-            var builder = WebApplication.CreateBuilder();
+            _config = config;
+        }
 
-            builder.Services.AddDbContext<DataContext>(options =>
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            //builder = WebApplication.CreateBuilder();
+
+            services.AddDbContext<DataContext>(options =>
             {
-                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlite(_config.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddControllers();
+            services.AddControllers();
 
             
-            builder.Services.AddCors(options =>
+            services.AddCors(options =>
             {
                 options.AddPolicy(myAngularPolicy,
                                     builder =>
@@ -28,79 +35,35 @@ namespace API
                                         .WithOrigins("https://localhost:4200");
                                     });
             });
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        
-        var app = builder.Build();
-        
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
         }
-        
-        app.UseHttpsRedirection();
-        
-        // app.UseCors(policy=>policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200/"));
-        app.UseStaticFiles();
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            
+            // Configure the HTTP request pipeline.
+            
+                // app.UseSwagger();
+                // app.UseSwaggerUI();
+            
+            
+            app.UseHttpsRedirection();
+            
+            // app.UseCors(policy=>policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200/"));
+            app.UseStaticFiles();
 
-        app.UseRouting();
+            app.UseRouting();
 
-        app.UseCors(myAngularPolicy);
-        
-        app.UseAuthorization();
-        
-        app.MapControllers();
-        
-        app.Run();
-
+            app.UseCors(myAngularPolicy);
+            
+            app.UseAuthorization();
+            
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
-
-    //     //(options =>
-    //     // {
-    //     //     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    //     // });
-    //     private readonly IConfiguration _config;
-        
-    //     public Startup(IConfiguration config)
-    //     {
-    //         _config = config;
-    //     }
-
-    //     public IConfiguration Configuration { get; }
-
-    //     // This method gets called by the runtime. Use this method to add services to the container.
-    //     public void ConfigureServices(IServiceCollection services)
-    //     {
-    //         services.AddDbContext<DataContext>(options =>
-    //         {
-    //             options.UseSqlite(_config.GetConnectionString("DefaultConnection"));
-    //         });
-    //         services.AddControllers();
-    //         services.AddCors();
-            
-    //     }
-
-    //     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    //     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    //     {
-
-    //         app.UseHttpsRedirection();
-
-    //         app.UseRouting();
-
-    //         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200")); //
-
-    //         app.UseAuthorization();
-
-    //         app.UseEndpoints(endpoints =>
-    //         {
-    //             endpoints.MapControllers();
-    //         });
-    //     }
-    // }
 
