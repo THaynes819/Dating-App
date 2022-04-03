@@ -14,7 +14,7 @@ namespace API
     {        
         private readonly IConfiguration _config;
         //WebApplicationBuilder builder;
-        string myAngularPolicy = "myAngularPolicy";
+        //string myAngularPolicy = "myAngularPolicy";
         public Startup(IConfiguration config)
         {
             _config = config;
@@ -26,22 +26,24 @@ namespace API
             services.AddApplicationServices(_config);
             services.AddControllers();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy(myAngularPolicy,
-                                    builder =>
-                                    {
-                                        builder.AllowAnyHeader()
-                                        .AllowAnyMethod()
-                                        .WithOrigins("https://localhost:4200");
-                                    });
-            });
+            services.AddCors();
+
+            // services.AddCors(options =>
+            // {
+            //     options.AddPolicy(myAngularPolicy,
+            //                         builder =>
+            //                         {
+            //                             builder.AllowAnyHeader()
+            //                             .AllowAnyMethod()
+            //                             .WithOrigins("https://localhost:4200");
+            //                         });
+            // });
             
             services.AddIdentityServices(_config);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            //services.AddEndpointsApiExplorer();
+            //services.AddSwaggerGen();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -49,11 +51,12 @@ namespace API
 
             app.UseHttpsRedirection();
 
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseCors(myAngularPolicy);
+            //app.UseCors(myAngularPolicy);
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 
             app.UseAuthentication();
 
